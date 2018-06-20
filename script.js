@@ -25,3 +25,19 @@ $(document).ready(function(){
      });
   });
 });
+
+function getBooks(){
+  $.ajax({ url: url })
+  .done(function(data){
+    var output = '<div>';
+      $.each(data, function(key, data){
+        output += '<div class="bg-secondary">';
+        output += '<h3>' + data.title + '</h3>';
+        output += '<p> Category: ' + data.category + '</p>';
+        output += '<p>' + data.excerpt + '</p>';
+        output += '</div>';
+      });
+    output += '</div>';
+    $('#books').html(output);
+  });
+}
