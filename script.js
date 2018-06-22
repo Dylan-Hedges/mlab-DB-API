@@ -11,11 +11,12 @@ $(document).ready(function(){
     var excerpt = $('#excerpt').val();
 
     if(sessionStorage.getItem('currentBookId') != null){
-      var url = urlUpdate;
-      //Needs to be PUT for updates (error 405 otherwise)
+      var id = sessionStorage.getItem('currentBookId');
+      var url = '';
+      //Needs to be PUT for updates/efits (error 405 otherwise)
       var type = 'PUT';
     }else{
-      var url = urlPost;
+      var url = '';
       var type = 'POST';
     }
 
@@ -44,13 +45,35 @@ $(document).ready(function(){
      //Takes value and passes it into the input field
      $('#title').val($(this).data('title'));
      $('#category').val($(this).data('category'));
+     //Note - text that has "" at the start and ends can affect functionality
      $('#excerpt').val($(this).data('excerpt'));
   });
+
+  //Deletes books
+  $('body').on('click', '#deleteBook', function(e){
+     e.preventDefault();
+     var id = $(this).data('id');
+     var url = '';
+     $.ajax({ url: url,
+       type: 'DELETE',
+       async: true,
+       timeout: 300000,
+       success: function(data){
+         window.location.href="index.html"
+       },
+       error: function(xhr, status, err){
+         console.log(err);
+       }
+      });
+   });
+
 });
+
+
 
 //Renders posts to screen (once Ajax request completes ".done" -> recieves JS object -> uses HTML to render on screen)
 function getBooks(){
-  $.ajax({ url: urlGet })
+  $.ajax({ url: '' })
   .done(function(data){
     var output = '<div>';
       $.each(data, function(key, data){
@@ -59,7 +82,7 @@ function getBooks(){
         output += '<p> Category: ' + data.category + '</p>';
         output += '<p>' + data.excerpt + '</p>';
         //html data attribute (oid is the object id generated in mlab)
-        output += '<a id="setBook" href="/" data-id="'+data._id.$oid+'" data-title="'+data.title+'" data-category="'+data.category+'" data-excerpt="'+data.excerpt+'">Edit</a>';
+        output += '<a id="setBook" href="/" data-id="'+data._id.$oid+'" data-title="'+data.title+'" data-category="'+data.category+'" data-excerpt="'+data.excerpt+'">Edit</a> | <a href="/" id="deleteBook" data-id="'+data._id.$oid+'">Delete</a>';
         output += '</div>';
       });
     output += '</div>';
